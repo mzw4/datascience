@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[44]:
+# In[3]:
 
 import sys, operator, time, os
 from collections import defaultdict
@@ -10,13 +10,13 @@ import numpy as np
 from pyspark import SparkContext
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 
-print os.environ["PYSPARK_SUBMIT_ARGS"]
-print sc._conf.get('spark.driver.memory')
-print sc._conf.get('spark.executor.memory')
-print sc._conf.getAll()
-sc.set('spark.driver.memory', '5g')
+# sc = SparkContext(appName="PythonPi")
 
-sc = SparkContext(appName="PythonPi")
+# %matplotlib inline
+# print os.environ["PYSPARK_SUBMIT_ARGS"]
+# print sc._conf.get('spark.driver.memory')
+# print sc._conf.get('spark.executor.memory')
+# print sc._conf.getAll()
 
 base_dir = 'ml-10M100K/'
 ratings_dir = base_dir + 'ratings.dat'
@@ -25,23 +25,23 @@ tags_dir = base_dir + 'tags.dat'
 
 test = False
 
-# In[45]:
+
+# In[4]:
 
 # load data as rdd
 ratings_rdd = sc.textFile(ratings_dir)    .map(lambda r: [float(e) if i == 2 else e for i, e in enumerate(r.split('::'))])
-# movies_rdd = sc.textFile(movies_dir).map(lambda r: r.split('::'))
-# tags_rdd = sc.textFile(tags_dir).map(lambda r: r.split('::'))
+movies_rdd = sc.textFile(movies_dir).map(lambda r: r.split('::'))
+tags_rdd = sc.textFile(tags_dir).map(lambda r: r.split('::'))
 
-# In[46]:
+
+# In[5]:
 
 # for testing
-# test_rdd = sc.parallelize(ratings_rdd.take(1000000))
-
-# if test:
-#     ratings_rdd = test_rdd
+if test:
+    ratings_rdd = ratings_rdd.sample(False, 0.01, int(time.time()))
 
 
-# In[47]:
+# In[6]:
 
 def get_user_count(data):
     return data.map(lambda r: int(r[0])).distinct().max()
@@ -51,7 +51,7 @@ user_count = get_user_count(ratings_rdd)
 print 'Users: %d' % user_count
 
 
-# In[48]:
+# In[7]:
 
 from sklearn.feature_extraction import DictVectorizer
 from scipy.sparse import csr_matrix
@@ -113,14 +113,14 @@ def get_similar_rated_by_user(user, movie, user_movies, movie_sparse_vectors):
 #     return dict(nearest_neighbors.collect())
 
 
-# In[49]:
+# In[8]:
 
 user_movies = get_user_movies(ratings_rdd)
 movie_sparse_vectors = get_movie_features(ratings_rdd)
-print user_movies['1'][:, 0]
+# print user_movies['1'][:, 0]
 
 
-# In[ ]:
+# In[9]:
 
 # from sklearn.feature_extraction import DictVectorizer
 # from scipy.sparse import csr_matrix
@@ -140,7 +140,7 @@ print user_movies['1'][:, 0]
 # get_k_similar(d, data, 10)
 
 
-# In[52]:
+# In[10]:
 
 # get mean for a grouped key result
 def get_mean(r):
@@ -187,7 +187,7 @@ def remove_bias(data):
     return data.map(lambda r: remove_sample_bias(r, user_means, movie_means, global_mean, user_movies))
 
 
-# In[53]:
+# In[ ]:
 
 ratings_rdd_unbiased = remove_bias(ratings_rdd)
 
