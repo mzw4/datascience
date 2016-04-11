@@ -10,7 +10,7 @@ import numpy as np
 from pyspark import SparkContext
 from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 
-# sc = SparkContext(appName="PythonPi")
+sc = SparkContext(appName="PythonPi")
 
 # %matplotlib inline
 # print os.environ["PYSPARK_SUBMIT_ARGS"]
