@@ -19,7 +19,7 @@ from pyspark.mllib.recommendation import ALS, MatrixFactorizationModel, Rating
 # print sc._conf.getAll()
 
 base_dir = 'ml-10M100K/'
-base_dir = 's3n://mzw4cs5304hw2/'
+base_dir = 's3n://mzw4cs5304hw2/ml-10M100K/'
 ratings_dir = base_dir + 'ratings.dat'
 movies_dir = base_dir + 'movies.dat'
 tags_dir = base_dir + 'tags.dat'
@@ -185,7 +185,7 @@ def remove_bias(data):
 # In[11]:
 
 ratings_rdd_unbiased = remove_bias(ratings_rdd)
-
+print ratings_rdd_unbiased.take(100)
 
 # In[12]:
 
